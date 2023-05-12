@@ -106,6 +106,31 @@ int main() {
         fprintf(stdout, "Operation done successfully\n");
     }
      */
+    string tempId;
+    string tempName;
+    string tempAuthor;
+    string tempGenre;
+    string answer;
+    cout<<"To add in a new anime type in the following information:"<<endl;
+    cout<<"Name: " <<endl;
+    cin>>tempName;
+
+    cout<<"Author: "<<endl;
+    cin>>tempAuthor;
+
+    cout<<"Genre: "<<endl;
+    cin>>tempGenre;
+
+    cout<<"\nInsert " + tempName + " by " + tempAuthor + " into the database?"<<endl;
+    cout<<"Answer yes or no"<<endl;
+    cin>>answer;
+    if(answer == "yes"){
+
+        cout<<"Successfully added, restart the program to see the new list"<<endl;
+    }
+    else{
+        cout<<tempName + " by " + tempAuthor + " was not added"<<endl;
+    }
     sqlite3_close(db);
 
     return 0;
