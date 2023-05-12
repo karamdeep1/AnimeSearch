@@ -130,6 +130,7 @@ int main() {
     }
     else{
         cout<<tempName + " by " + tempAuthor + " was not added"<<endl;
+
     }
     sqlite3_close(db);
 
