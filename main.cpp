@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include "sqlite/sqlite3.h"
 #include <cstring>
+#include <set>
+#include <vector>
 
 using namespace std;
 
@@ -16,24 +18,17 @@ static int callBack(void *data, int argc, char **argv, char **azColName){
     return 0;
 }
 
+
+
 int main() {
     sqlite3 *db;
     char *zErrMsg = 0;
-    int rc;
     char *sql;
-    //const char* data = "Callback function called";
+    int rc;
 
 
 
-    rc = sqlite3_open("ex1.db", &db);
-    /*
-    if(rc){
-        fprintf(stderr, "Cant open database: %s\n", sqlite3_errmsg(db));
-        return 0;
-    } else{
-        fprintf(stderr, "Opened database successfully\n");
-    }
-*/
+    sqlite3_open("ex1.db", &db);
 
 
 
@@ -42,97 +37,74 @@ int main() {
             "TITLE         TEXT                NOT NULL," \
             "AUTHOR_NAME   TEXT                NOT NULL," \
             "GENRE         TEXT                NOT NULL);";
-    rc = sqlite3_exec(db, sql, callBack, 0, &zErrMsg);
-    /*
-    if( rc != SQLITE_OK ){
-        fprintf(stderr, "SQL error: %s\n", zErrMsg);
-        sqlite3_free(zErrMsg);
+    sqlite3_exec(db, sql, callBack, 0, &zErrMsg);
+
+
+
+    set<string> myset;
+    myset.insert("Slice Of Life");
+    myset.insert("Shonen");
+    myset.insert("Comedy");
+    myset.insert("Romance");
+    myset.insert("Drama");
+    myset.insert("Isekai");
+    myset.insert("Action");
+    myset.insert("Martial Arts");
+
+    string genres;
+    cout << "Choose from the following genres:" << endl;
+    for (const auto& g : myset) {
+        cout << g << endl;
+    }
+    cout << "Enter the name of the genre you want to see animes from: " << endl;
+    getline(cin,genres);
+
+    if (myset.find(genres) != myset.end()) {
+        string query = "SELECT * FROM anime WHERE GENRE='" + genres + "';";
+        sqlite3_exec(db, query.c_str(), callBack, 0, &zErrMsg);
+
+
+        string tempName;
+        string tempAuthor;
+        string answer;
+        string tempGenre;
+        cout << "To add in a new anime, type in the following information:" << endl;
+        cout << "Name: " << endl;
+        getline(cin,tempName);
+
+        cout << "Author: " << endl;
+        getline(cin,tempAuthor);
+
+        cout <<"Genre: " << endl;
+        getline(cin,tempGenre);
+
+        if (myset.find(tempGenre) != myset.end()) {
+            cout << "\nInsert " << tempName << " by " << tempAuthor << " into the database?" << endl;
+            cout << "Answer yes or no" << endl;
+            cin >> answer;
+            if (answer == "yes") {
+                int tempId;
+                int lowerBound = 10000;
+                int upperBound = 10000000;
+                bool idExists = true;
+                while(idExists){
+                    tempId = (rand() % (upperBound - lowerBound + 1)) + lowerBound;
+                    string id_str = to_string(tempId);
+                    query = "INSERT INTO anime(ID, TITLE, AUTHOR_NAME, GENRE) VALUES (" + id_str + ",'" + tempName + "','" +
+                            tempAuthor + "','" + genres + "');";
+                    rc = sqlite3_exec(db, query.c_str(), callBack, 0, &zErrMsg);
+                    if (rc != SQLITE_OK) {
+                        cerr << "SQL error: " << zErrMsg << endl;
+                        sqlite3_free(zErrMsg);
+                    } else {
+                        // If query returns 0 rows, ID is unique
+                        idExists = false;
+                    }
+                }
+            }
+        }
     } else {
-        fprintf(stdout, "Table created successfully\n");
+        cout << "Invalid genre" << endl;
     }
-*/
-
-
-
-    sql = "INSERT INTO anime (ID, TITLE, AUTHOR_NAME, GENRE)" \
-            "VALUES (58395829, 'Hajime no Ippo', 'George Morikawa', 'Martial Arts');"
-            "INSERT INTO anime (ID, TITLE, AUTHOR_NAME, GENRE)" \
-            "VALUES (10582945, 'The Rising of Shield Hero', 'Aneko Yusagi', 'Isekai');"
-            "INSERT INTO anime (ID, TITLE, AUTHOR_NAME, GENRE)" \
-            "VALUES (2948294, 'Vinland Saga', 'Makoto Yukimura', 'Drama');"
-            "INSERT INTO anime (ID, TITLE, AUTHOR_NAME, GENRE)" \
-            "VALUES (0194902, 'Darling in the Franxx', 'Kentaro Yabuki', 'Romance');"
-            "INSERT INTO anime (ID, TITLE, AUTHOR_NAME, GENRE)" \
-            "VALUES (12314, 'Gintama', 'Hideaki Sorachi', 'Comedy');"
-            "INSERT INTO anime (ID, TITLE, AUTHOR_NAME, GENRE)" \
-            "VALUES (72341514, 'Your Lie in April', 'Naoshi Arakawa', 'Slice of Life');"
-            "INSERT INTO anime (ID, TITLE, AUTHOR_NAME, GENRE)" \
-            "VALUES (8235611, 'One Piece', 'Eiichiro Oda', 'Action');"
-            "INSERT INTO anime (ID, TITLE, AUTHOR_NAME, GENRE)" \
-            "VALUES (12345567, 'Naruto', 'Masashi Kishimoto', 'Shonen');" \
-            "INSERT INTO anime (ID, TITLE, AUTHOR_NAME, GENRE)" \
-            "VALUES (7654312, 'Dragon Ball', 'Akira Toriyama', 'Action');";
-    rc = sqlite3_exec(db, sql, callBack, 0, &zErrMsg);
-    /*
-    if( rc != SQLITE_OK ){
-        fprintf(stderr, "SQL error: %s\n", zErrMsg);
-        sqlite3_free(zErrMsg);
-    } else {
-        fprintf(stdout, "Records created successfully\n");
-    }
-     */
-
-
-
-
-    char* genre;
-    cout << "Pick a genre from the list:" << std::endl;
-    string listOfGenres[] = {"Slice Of Life", "Shonen", "Comedy", "Romance", "Drama", "Isekai", "Action", "Martial Arts"};
-    for (string s: listOfGenres) {
-        cout << s << endl;
-    }
-    cin.getline(genre, 100);
-    char* query = "SELECT * FROM anime WHERE GENRE = '";
-    sql = new char[strlen(query)+strlen(genre)];
-    strcpy(sql,query);
-    strcat(sql,genre);
-    strcat(sql,"'");
-    rc = sqlite3_exec(db, sql, callBack, 0, &zErrMsg);
-    /*
-    if( rc != SQLITE_OK ) {
-        fprintf(stderr, "SQL error: %s\n", zErrMsg);
-        sqlite3_free(zErrMsg);
-    } else {
-        fprintf(stdout, "Operation done successfully\n");
-    }
-     */
-    string tempId;
-    string tempName;
-    string tempAuthor;
-    string tempGenre;
-    string answer;
-    cout<<"To add in a new anime type in the following information:"<<endl;
-    cout<<"Name: " <<endl;
-    cin>>tempName;
-
-    cout<<"Author: "<<endl;
-    cin>>tempAuthor;
-
-    cout<<"Genre: "<<endl;
-    cin>>tempGenre;
-
-    cout<<"\nInsert " + tempName + " by " + tempAuthor + " into the database?"<<endl;
-    cout<<"Answer yes or no"<<endl;
-    cin>>answer;
-    if(answer == "yes"){
-
-        cout<<"Successfully added, restart the program to see the new list"<<endl;
-    }
-    else{
-        cout<<tempName + " by " + tempAuthor + " was not added"<<endl;
-
-    }
-    sqlite3_close(db);
-
     return 0;
 }
