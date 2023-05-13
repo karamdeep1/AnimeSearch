@@ -13,7 +13,7 @@ The anime search is console based with an embedded database that shows a list of
 anime in the database. This application is very basic and is user friendly. Many contributions can be made to it.
 
 # Contributions
-There are a lot of areas to improve upon and to add in so this project is very flexible and can go in many directions. One way to contribute is to let users add many animes at once.
+There are a lot of areas to improve upon and to add in so this project is very flexible and can go in many directions. One way to contribute is to let users add many animes in one run.
 
 # Author
 Karamdeep Bassi https://github.com/karamdeep1
