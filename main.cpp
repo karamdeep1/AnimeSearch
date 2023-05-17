@@ -16,8 +16,6 @@ using namespace std;
  * azColName contains the name of each column in query
  */
 static int callBack(void *data, int argc, char **argv, char **azColName){
-    //prints out data
-    fprintf(stderr, "%s: ", (const char*)data);
     //prints out name of column and corresponding value
     for(int i = 0; i < argc; i++){
         printf("%s = %s\n", azColName[i], argv[i] ? argv[i] : "NULL");
@@ -116,13 +114,13 @@ int main() {
                     string id_str = to_string(tempId);
                     //sql insert query
                     query = "INSERT INTO anime(ID, TITLE, AUTHOR_NAME, GENRE) VALUES (" + id_str + ",'" + tempName + "','" +
-                            tempAuthor + "','" + genres + "');";
+                            tempAuthor + "','" + tempGenre + "');";
                     //executes the insert query and sets the return value to rc
                     rc = sqlite3_exec(db, query.c_str(), callBack, 0, &zErrMsg);
                     //checks if rc does not equal 0 and if so it errors out SQL error otherwise sets idExists to false
                     if (rc != SQLITE_OK) {
-                        cerr << "SQL error: " << zErrMsg << endl;
-                        sqlite3_free(zErrMsg);
+                        //cerr << "SQL error: " << zErrMsg << endl;
+                        //sqlite3_free(zErrMsg);
                     } else {
                         // If query returns 0 rows, ID is unique
                         idExists = false;
