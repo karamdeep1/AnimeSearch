@@ -22,4 +22,4 @@ Karamdeep Bassi https://github.com/karamdeep1
 C++17
 
 # License
-This project is licensed under MIT License - see the 'LICENSE' file for details.
+This project is licensed under MIT License - see the `LICENSE` file for details.
